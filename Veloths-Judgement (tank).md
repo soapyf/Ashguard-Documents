@@ -8,7 +8,7 @@ Complete list for body and all attachments
 | Max Linear Velocity | 12ms         |              |
 | Nominal Hover Height|  2m          |              |
 | Max Hover Height    | 10m          |              |
-| Hover Time          |  4s          | Length of time vehicle can spend boosting up |
+| Hover Time          |  2s          | Length of time vehicle can spend boosting up |
 | Hover Recharge Delay|  4s          | Length of time after boosting to wait before recharging |
 
 ## Veloth's Judgement (Turret) v1.0.0
