@@ -12,6 +12,7 @@
 | Normal Damage       | 100          |
 | Partial Damage      | 10           |
 | Velocity Range      | 80-200       |
+| Thunderbug LBA      | 1            |
 
 ## Commands
 All Commands Are On Channel 1. Default keybinds are listed below.
