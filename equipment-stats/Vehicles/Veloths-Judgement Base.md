@@ -8,7 +8,9 @@
 | Nominal Hover Height|  2m          |              |
 | Max Hover Height    | 10m          |              |
 | Hover Fuel          | 100          |              |
-| Hover Recharge Delay|  4s          | Length of time after consuming all fuel before recharging |
+| Fuel Use Rate       | 4.5          | Per Second   |
+| Fuel Charge Rate    | 12.5         | Per Second When Not Boosting  |
+| Hover Recharge Delay|  8s          | Length of time after consuming all fuel before usable again |
 
 ### Commands
 All Commands Are On Channel 1. Default keybinds are listed below.
