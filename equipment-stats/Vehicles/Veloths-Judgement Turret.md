@@ -1,17 +1,5 @@
-# Veloth's Judgement Hover Tank
-Complete list for body and all attachments
+# Veloth's Judgement (Turret) v1.0.0
 
-## Veloth's Judgement (Body) v1.0.0
-| Name                | Value        | Description  |
-|---------------------|--------------|--------------|
-| LBA HP              | 250/400      |              |
-| Max Linear Velocity | 12ms         |              |
-| Nominal Hover Height|  2m          |              |
-| Max Hover Height    | 10m          |              |
-| Hover Time          |  2s          | Length of time vehicle can spend boosting up |
-| Hover Recharge Delay|  4s          | Length of time after boosting to wait before recharging |
-
-## Veloth's Judgement (Turret) v1.0.0
 ### Main Cannon
 | Name                | Value        |
 |---------------------|--------------|
@@ -41,6 +29,4 @@ All Commands Are On Channel 1. Default keybinds are listed below.
 |--------------|--------------|-------------------------------------------------------------                                  
 | —            | menu         | Open configuration Menu                            
 | Left-click   | —            | Fires Main Cannon                             
-| C            | —            | Fires Secondary Cannons                               
-| Q            | aux          | Toggle Mouselook Steering                      
-| E            | —            | Vertical Boost Key  
+| C            | —            | Fires Secondary Cannons
