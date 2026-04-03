@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ashguard Documents</title>
+
+    <!-- Prevent theme flash: apply saved theme before any paint -->
+    <script>
+        (function () {
+            const saved = localStorage.getItem('ashguard-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', saved);
+        })();
+    </script>
+
+    <style>
+        /* ============================================================
+           CSS VARIABLES — Light & Dark (from admin-style.css)
+        ============================================================ */
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e9ecef;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --text-muted: #adb5bd;
+            --border-color: #dee2e6;
+            --card-bg: #ffffff;
+            --sidebar-bg-start: #1a1a2e;
+            --sidebar-bg-end: #16213e;
+            --sidebar-text: rgba(255, 255, 255, 0.8);
+            --sidebar-hover: rgba(255, 255, 255, 0.1);
+            --sidebar-active: rgba(255, 255, 255, 0.18);
+            --gray-35: #2D2F31;
+            --gray-40: #404346;
+            --gray-70: #DCE0E3;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3a3a3a;
+            --text-primary: #e9ecef;
+            --text-secondary: #adb5bd;
+            --text-muted: #6c757d;
+            --border-color: #495057;
+            --card-bg: #2d2d2d;
+            --sidebar-bg-start: #0f0f0f;
+            --sidebar-bg-end: #1a1a1a;
+            --sidebar-text: rgba(255, 255, 255, 0.9);
+            --sidebar-hover: rgba(255, 255, 255, 0.1);
+            --sidebar-active: rgba(255, 255, 255, 0.18);
+        }
+
+        /* ============================================================
+           RESET & BASE
+        ============================================================ */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+           HEADER BAR
+        ============================================================ */
+        #header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: linear-gradient(135deg, var(--sidebar-bg-start) 0%, var(--sidebar-bg-end) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 200;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        #header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #site-title {
+            color: rgba(255, 255, 255, 0.92);
+            font-size: 1.05rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        #hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        #hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 2px;
+            transition: all 0.2s ease;
+        }
+
+        /* ============================================================
+           DARK MODE TOGGLE (from admin-style.css / theme-toggle.js)
+        ============================================================ */
+        .mode-toggle {
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .mode-toggle h6 {
+            margin: 0;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .label-dark,
+        .label-light {
+            padding: 8px 12px;
+            min-width: 32px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .label-dark:hover,
+        .label-light:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        [data-theme="dark"] .label-dark {
+            color: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+        }
+
+        [data-theme="light"] .label-light {
+            color: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+        }
+
+        .toggle-switch {
+            margin: 0;
+            padding: 0;
+            width: 48px;
+            height: 28px;
+            border: none;
+            outline: none;
+            overflow: hidden;
+            position: relative;
+            border-radius: 14px;
+            display: inline-block;
+            cursor: pointer;
+            background: var(--gray-40, #404346);
+            transition: background 0.2s ease-in-out;
+        }
+
+        [data-theme="dark"] .toggle-switch {
+            background: var(--gray-70, #DCE0E3);
+        }
+
+        .toggle-switch::before {
+            top: 4px;
+            left: 4px;
+            content: "";
+            width: 20px;
+            height: 20px;
+            display: block;
+            position: absolute;
+            border-radius: 12px;
+            background: var(--gray-70, #DCE0E3);
+            transform: translateX(0);
+            transition: all 0.2s ease-in-out;
+        }
+
+        [data-theme="dark"] .toggle-switch::before {
+            background: var(--gray-35, #2D2F31);
+            transform: translateX(0);
+        }
+
+        [data-theme="light"] .toggle-switch::before {
+            transform: translateX(20px);
+        }
+
+        .toggle-switch::after {
+            content: "";
+            top: 14px;
+            right: 2px;
+            width: 1px;
+            height: 1px;
+            display: block;
+            position: absolute;
+            border-radius: 0.5px;
+            background: var(--gray-40, #404346);
+            transition: all 0.2s ease-in-out;
+        }
+
+        [data-theme="dark"] .toggle-switch::after {
+            top: -2px;
+            right: 2px;
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            background: var(--gray-70, #DCE0E3);
+        }
+
+        .toggle-switch:hover {
+            background: var(--gray-35, #2D2F31);
+        }
+
+        .toggle-switch:hover::after {
+            background: var(--gray-35, #2D2F31);
+        }
+
+        [data-theme="dark"] .toggle-switch:hover {
+            background: #EFF2F5;
+        }
+
+        [data-theme="dark"] .toggle-switch:hover::after {
+            background: #EFF2F5;
+        }
+
+        .noselect {
+            user-select: none;
+            -ms-user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* ============================================================
+           LAYOUT
+        ============================================================ */
+        #app {
+            display: flex;
+            flex: 1;
+            padding-top: 56px; /* header height */
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+           SIDEBAR
+        ============================================================ */
+        #sidebar {
+            position: fixed;
+            top: 56px;
+            left: 0;
+            bottom: 0;
+            width: 280px;
+            background: linear-gradient(135deg, var(--sidebar-bg-start) 0%, var(--sidebar-bg-end) 100%);
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease, background 0.3s ease;
+            padding: 16px 0 24px;
+        }
+
+        #sidebar::-webkit-scrollbar { width: 4px; }
+        #sidebar::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+        #sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+        /* Sidebar folder groups */
+        .sidebar-group {
+            margin-bottom: 4px;
+        }
+
+        .sidebar-group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 20px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.2s ease;
+            list-style: none;
+            user-select: none;
+        }
+
+        .sidebar-group-header:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .sidebar-group-header .chevron {
+            font-size: 0.65rem;
+            transition: transform 0.2s ease;
+            opacity: 0.6;
+        }
+
+        .sidebar-group.open .sidebar-group-header .chevron {
+            transform: rotate(90deg);
+        }
+
+        .sidebar-group-files {
+            display: none;
+            padding: 2px 0;
+        }
+
+        .sidebar-group.open .sidebar-group-files {
+            display: block;
+        }
+
+        /* Root-level files (no folder) */
+        .sidebar-root-files {
+            padding: 4px 0 8px;
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 8px 20px 8px 28px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-radius: 6px;
+            margin: 1px 8px;
+            transition: background 0.15s ease, color 0.15s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-link:hover {
+            background: var(--sidebar-hover);
+            color: #fff;
+        }
+
+        .sidebar-link.active {
+            background: var(--sidebar-active);
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.06);
+            margin: 8px 16px;
+        }
+
+        /* ============================================================
+           SIDEBAR OVERLAY (mobile)
+        ============================================================ */
+        #sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+
+        #sidebar-backdrop.visible {
+            display: block;
+        }
+
+        /* ============================================================
+           MAIN CONTENT
+        ============================================================ */
+        #content-area {
+            margin-left: 280px;
+            flex: 1;
+            min-width: 0;
+            padding: 40px 48px;
+            max-width: 900px;
+        }
+
+        /* Markdown rendered content */
+        #content h1 { font-size: 1.9rem; font-weight: 700; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); color: var(--text-primary); }
+        #content h2 { font-size: 1.4rem; font-weight: 600; margin-top: 32px; margin-bottom: 12px; color: var(--text-primary); }
+        #content h3 { font-size: 1.15rem; font-weight: 600; margin-top: 24px; margin-bottom: 8px; color: var(--text-primary); }
+        #content h4, #content h5, #content h6 { font-size: 1rem; font-weight: 600; margin-top: 20px; margin-bottom: 6px; color: var(--text-primary); }
+        #content p { margin-bottom: 14px; line-height: 1.75; color: var(--text-primary); }
+        #content ul, #content ol { margin-bottom: 14px; padding-left: 24px; color: var(--text-primary); }
+        #content li { margin-bottom: 4px; line-height: 1.65; }
+        #content a { color: #4da6ff; text-decoration: none; }
+        #content a:hover { text-decoration: underline; }
+        #content strong { font-weight: 600; }
+        #content em { font-style: italic; }
+        #content hr { border: none; border-top: 1px solid var(--border-color); margin: 28px 0; }
+        #content blockquote { border-left: 3px solid rgba(255,255,255,0.2); padding: 8px 16px; margin: 16px 0; color: var(--text-secondary); background: var(--bg-secondary); border-radius: 0 6px 6px 0; }
+        [data-theme="light"] #content blockquote { border-left-color: #ced4da; }
+
+        #content code {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Cascadia Code', 'Fira Code', monospace;
+            font-size: 0.875em;
+        }
+
+        #content pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px 20px;
+            overflow-x: auto;
+            margin-bottom: 16px;
+        }
+
+        #content pre code {
+            background: none;
+            padding: 0;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        /* Tables */
+        #content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        #content th {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-weight: 600;
+            padding: 10px 14px;
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+
+        #content td {
+            padding: 9px 14px;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        #content tr:nth-child(even) td {
+            background: rgba(0,0,0,0.03);
+        }
+
+        [data-theme="dark"] #content tr:nth-child(even) td {
+            background: rgba(255,255,255,0.03);
+        }
+
+        /* State messages */
+        #content-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* ============================================================
+           RESPONSIVE — MOBILE
+        ============================================================ */
+        @media (max-width: 768px) {
+            #hamburger {
+                display: flex;
+            }
+
+            #sidebar {
+                transform: translateX(-100%);
+                width: 260px;
+            }
+
+            #sidebar.open {
+                transform: translateX(0);
+            }
+
+            #content-area {
+                margin-left: 0;
+                padding: 24px 20px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1100px) {
+            #content-area {
+                padding: 32px 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+         HEADER
+    ============================================================ -->
+    <header id="header">
+        <div id="header-left">
+            <button id="hamburger" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+            <span id="site-title">Ashguard Documents</span>
+        </div>
+
+        <!-- Dark mode toggle (Tim Silva design) -->
+        <div class="mode-toggle noselect">
+            <h6 class="label-dark">Dark</h6>
+            <div class="toggle-switch" id="themeToggle"></div>
+            <h6 class="label-light">Light</h6>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         APP SHELL
+    ============================================================ -->
+    <div id="app">
+
+        <!-- Sidebar backdrop (mobile overlay) -->
+        <div id="sidebar-backdrop"></div>
+
+        <!-- Sidebar navigation -->
+        <nav id="sidebar" aria-label="Documentation navigation">
+            <div id="sidebar-content">
+                <div id="content-state" style="min-height:80px;">Loading…</div>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main id="content-area">
+            <article id="content">
+                <div id="content-state">Select a page from the sidebar.</div>
+            </article>
+        </main>
+
+    </div>
+
+    <!-- marked.js (markdown parser) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script>
+    /* ================================================================
+       CONFIGURATION
+    ================================================================ */
+    const REPO_OWNER = 'soapyf';
+    const REPO_NAME  = 'Ashguard-Documents';
+    const REPO_BRANCH = 'main';
+    const API_TREE_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${REPO_BRANCH}?recursive=1`;
+    const RAW_BASE    = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}`;
+    const DEFAULT_FILE = 'README.md';
+
+    const LS_THEME   = 'ashguard-theme';
+    const LS_ETAG    = 'ashguard-etag';
+    const LS_TREE    = 'ashguard-tree';
+    const LS_FOLDER  = 'ashguard-folders'; // JSON: { folderName: true/false }
+    const FILE_CACHE_PREFIX = 'ashguard-file-';
+
+    /* ================================================================
+       THEME TOGGLE (theme-toggle.js logic, embedded)
+    ================================================================ */
+    (function () {
+        const toggle    = document.querySelector('.toggle-switch');
+        const labelDark = document.querySelector('.label-dark');
+        const labelLight = document.querySelector('.label-light');
+
+        if (!toggle) return;
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem(LS_THEME, theme);
+        }
+
+        toggle.addEventListener('click', function () {
+            const current = document.documentElement.getAttribute('data-theme');
+            setTheme(current === 'dark' ? 'light' : 'dark');
+        });
+
+        if (labelLight) {
+            labelLight.addEventListener('click', function () {
+                if (document.documentElement.getAttribute('data-theme') === 'dark') setTheme('light');
+            });
+        }
+
+        if (labelDark) {
+            labelDark.addEventListener('click', function () {
+                if (document.documentElement.getAttribute('data-theme') === 'light') setTheme('dark');
+            });
+        }
+    })();
+
+    /* ================================================================
+       MOBILE SIDEBAR
+    ================================================================ */
+    (function () {
+        const hamburger = document.getElementById('hamburger');
+        const sidebar   = document.getElementById('sidebar');
+        const backdrop  = document.getElementById('sidebar-backdrop');
+
+        function openSidebar() {
+            sidebar.classList.add('open');
+            backdrop.classList.add('visible');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            backdrop.classList.remove('visible');
+        }
+
+        hamburger.addEventListener('click', function () {
+            sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+        });
+
+        backdrop.addEventListener('click', closeSidebar);
+
+        // Close sidebar when a link is tapped on mobile
+        document.getElementById('sidebar').addEventListener('click', function (e) {
+            if (e.target.classList.contains('sidebar-link') && window.innerWidth <= 768) {
+                closeSidebar();
+            }
+        });
+    })();
+
+    /* ================================================================
+       GITHUB API — TREE FETCH WITH ETAG CACHING
+    ================================================================ */
+    async function fetchTree() {
+        const storedEtag = localStorage.getItem(LS_ETAG);
+        const storedTree = localStorage.getItem(LS_TREE);
+
+        const headers = { 'Accept': 'application/vnd.github+json' };
+        if (storedEtag && storedTree) {
+            headers['If-None-Match'] = storedEtag;
+        }
+
+        let response;
+        try {
+            response = await fetch(API_TREE_URL, { headers });
+        } catch (err) {
+            // Network failure — fall back to cache if available
+            if (storedTree) {
+                console.warn('Network error, using cached tree');
+                return JSON.parse(storedTree);
+            }
+            throw new Error('Network error and no cached tree available.');
+        }
+
+        if (response.status === 304) {
+            // Nothing changed — use cached tree
+            return JSON.parse(storedTree);
+        }
+
+        if (!response.ok) {
+            if (storedTree) {
+                console.warn(`GitHub API returned ${response.status}, using cached tree`);
+                return JSON.parse(storedTree);
+            }
+            throw new Error(`GitHub API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const etag = response.headers.get('ETag');
+        if (etag) localStorage.setItem(LS_ETAG, etag);
+        localStorage.setItem(LS_TREE, JSON.stringify(data));
+        return data;
+    }
+
+    /* ================================================================
+       BUILD SIDEBAR STRUCTURE FROM TREE
+    ================================================================ */
+    function buildFileMap(tree) {
+        // tree.tree is an array of { path, type, sha, ... }
+        const mdFiles = tree.tree.filter(item =>
+            item.type === 'blob' && item.path.endsWith('.md')
+        );
+
+        // Group by top-level folder; root files go in '' key
+        const groups = {};
+        for (const file of mdFiles) {
+            const parts = file.path.split('/');
+            const folder = parts.length > 1 ? parts[0] : '';
+            if (!groups[folder]) groups[folder] = [];
+            groups[folder].push(file);
+        }
+
+        return groups;
+    }
+
+    /* ================================================================
+       SIDEBAR RENDERING
+    ================================================================ */
+    function formatFileName(path) {
+        const name = path.split('/').pop().replace(/\.md$/, '');
+        return name.replace(/-/g, ' ');
+    }
+
+    function formatFolderName(folder) {
+        return folder.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function hashFromPath(path) {
+        return '#' + path.replace(/\.md$/, '');
+    }
+
+    function pathFromHash(hash) {
+        return hash.replace(/^#/, '') + '.md';
+    }
+
+    function renderSidebar(groups, activeHash) {
+        const container = document.getElementById('sidebar-content');
+        const savedFolderState = JSON.parse(localStorage.getItem(LS_FOLDER) || '{}');
+        let html = '';
+
+        // Root-level files first (no folder)
+        if (groups[''] && groups[''].length > 0) {
+            html += '<div class="sidebar-root-files">';
+            for (const file of groups['']) {
+                const hash = hashFromPath(file.path);
+                const isActive = hash === activeHash ? ' active' : '';
+                html += `<a class="sidebar-link${isActive}" href="${hash}" data-path="${file.path}" data-sha="${file.sha}">${formatFileName(file.path)}</a>`;
+            }
+            html += '</div>';
+            if (Object.keys(groups).filter(k => k !== '').length > 0) {
+                html += '<div class="sidebar-divider"></div>';
+            }
+        }
+
+        // Folder groups
+        const folders = Object.keys(groups).filter(k => k !== '').sort();
+        for (const folder of folders) {
+            // Default: open if any file in this folder is active, or if saved as open
+            const folderFiles = groups[folder];
+            const hasActive = folderFiles.some(f => hashFromPath(f.path) === activeHash);
+            const isOpen = hasActive || (savedFolderState[folder] !== false);
+
+            html += `<div class="sidebar-group${isOpen ? ' open' : ''}" data-folder="${folder}">`;
+            html += `<div class="sidebar-group-header">`;
+            html += `<span>${formatFolderName(folder)}</span>`;
+            html += `<span class="chevron">&#9654;</span>`;
+            html += `</div>`;
+            html += `<div class="sidebar-group-files">`;
+
+            for (const file of folderFiles) {
+                const hash = hashFromPath(file.path);
+                const isActive = hash === activeHash ? ' active' : '';
+                const name = formatFileName(file.path);
+                html += `<a class="sidebar-link${isActive}" href="${hash}" data-path="${file.path}" data-sha="${file.sha}">${name}</a>`;
+            }
+
+            html += `</div></div>`;
+        }
+
+        container.innerHTML = html;
+
+        // Folder toggle click handlers
+        container.querySelectorAll('.sidebar-group-header').forEach(header => {
+            header.addEventListener('click', function () {
+                const group = this.closest('.sidebar-group');
+                const folder = group.dataset.folder;
+                const willOpen = !group.classList.contains('open');
+                group.classList.toggle('open', willOpen);
+
+                // Persist state
+                const state = JSON.parse(localStorage.getItem(LS_FOLDER) || '{}');
+                state[folder] = willOpen;
+                localStorage.setItem(LS_FOLDER, JSON.stringify(state));
+            });
+        });
+
+        // File link click handlers
+        container.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const path = this.dataset.path;
+                const sha  = this.dataset.sha;
+                // Update active state visually
+                container.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                // Update hash
+                history.pushState(null, '', hashFromPath(path));
+                loadFile(path, sha);
+            });
+        });
+    }
+
+    /* ================================================================
+       FILE FETCHING WITH SHA-BASED CACHE
+    ================================================================ */
+    async function loadFile(path, sha) {
+        const contentEl = document.getElementById('content');
+
+        // Check SHA-keyed cache
+        const cacheKey = FILE_CACHE_PREFIX + sha;
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+            contentEl.innerHTML = marked.parse(cached);
+            scrollToTop();
+            return;
+        }
+
+        contentEl.innerHTML = '<div id="content-state">Loading…</div>';
+
+        let text;
+        try {
+            const response = await fetch(`${RAW_BASE}/${path}`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            text = await response.text();
+        } catch (err) {
+            contentEl.innerHTML = `<div id="content-state">Failed to load <code>${path}</code>.<br><small>${err.message}</small></div>`;
+            return;
+        }
+
+        // Cache by SHA so this file is never re-fetched until its content changes
+        try {
+            localStorage.setItem(cacheKey, text);
+        } catch (e) {
+            // localStorage quota exceeded — evict oldest file caches and retry
+            evictOldFileCaches();
+            try { localStorage.setItem(cacheKey, text); } catch (_) { /* ignore */ }
+        }
+
+        contentEl.innerHTML = marked.parse(text);
+        scrollToTop();
+    }
+
+    function evictOldFileCaches() {
+        const keys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith(FILE_CACHE_PREFIX)) keys.push(key);
+        }
+        // Remove roughly half
+        keys.slice(0, Math.ceil(keys.length / 2)).forEach(k => localStorage.removeItem(k));
+    }
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ================================================================
+       ROUTING — resolve path from current URL hash
+    ================================================================ */
+    function getCurrentHash() {
+        return window.location.hash || ('#' + DEFAULT_FILE.replace(/\.md$/, ''));
+    }
+
+    function findFileByPath(groups, path) {
+        for (const files of Object.values(groups)) {
+            const found = files.find(f => f.path === path);
+            if (found) return found;
+        }
+        return null;
+    }
+
+    /* ================================================================
+       INIT
+    ================================================================ */
+    async function init() {
+        const contentEl = document.getElementById('content');
+        contentEl.innerHTML = '<div id="content-state">Loading documentation…</div>';
+
+        let treeData;
+        try {
+            treeData = await fetchTree();
+        } catch (err) {
+            document.getElementById('sidebar-content').innerHTML =
+                '<div style="padding:16px;color:rgba(255,255,255,0.5);font-size:0.8rem;">Could not load navigation.</div>';
+            contentEl.innerHTML = `<div id="content-state">Unable to reach GitHub API.<br><small>${err.message}</small></div>`;
+            return;
+        }
+
+        const groups = buildFileMap(treeData);
+        const currentHash = getCurrentHash();
+        renderSidebar(groups, currentHash);
+
+        // Load initial file from hash
+        const targetPath = pathFromHash(currentHash);
+        const file = findFileByPath(groups, targetPath);
+
+        if (file) {
+            loadFile(file.path, file.sha);
+        } else if (currentHash !== '#' + DEFAULT_FILE.replace(/\.md$/, '')) {
+            // Hash not found — try default
+            const defaultFile = findFileByPath(groups, DEFAULT_FILE);
+            if (defaultFile) {
+                history.replaceState(null, '', hashFromPath(defaultFile.path));
+                renderSidebar(groups, hashFromPath(defaultFile.path));
+                loadFile(defaultFile.path, defaultFile.sha);
+            } else {
+                contentEl.innerHTML = '<div id="content-state">Page not found.</div>';
+            }
+        } else {
+            contentEl.innerHTML = '<div id="content-state">Page not found.</div>';
+        }
+
+        // Handle browser back/forward navigation
+        window.addEventListener('popstate', function () {
+            const hash = getCurrentHash();
+            const path = pathFromHash(hash);
+            const file = findFileByPath(groups, path);
+            renderSidebar(groups, hash);
+            if (file) loadFile(file.path, file.sha);
+        });
+    }
+
+    // Start
+    document.addEventListener('DOMContentLoaded', init);
+    </script>
+
+</body>
+</html>
