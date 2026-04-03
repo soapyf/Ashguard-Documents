@@ -1,1 +1,0 @@
-# Ashguard Documents
