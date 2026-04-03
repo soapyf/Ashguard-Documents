@@ -313,7 +313,7 @@
             opacity: 0.6;
         }
 
-        .sidebar-group.open .sidebar-group-header .chevron {
+        .sidebar-group.open > .sidebar-group-header .chevron {
             transform: rotate(90deg);
         }
 
@@ -322,7 +322,7 @@
             padding: 2px 0;
         }
 
-        .sidebar-group.open .sidebar-group-files {
+        .sidebar-group.open > .sidebar-group-files {
             display: block;
         }
 
@@ -354,6 +354,24 @@
             background: var(--sidebar-active);
             color: var(--text-primary);
             font-weight: 500;
+        }
+
+        /* Nested subfolder indentation */
+        .sidebar-group .sidebar-group .sidebar-group-header {
+            padding-left: 32px;
+            font-size: 0.65rem;
+        }
+
+        .sidebar-group .sidebar-group .sidebar-link {
+            padding-left: 40px;
+        }
+
+        .sidebar-group .sidebar-group .sidebar-group .sidebar-group-header {
+            padding-left: 48px;
+        }
+
+        .sidebar-group .sidebar-group .sidebar-group .sidebar-link {
+            padding-left: 56px;
         }
 
         .sidebar-divider {
@@ -691,16 +709,23 @@
             item.type === 'blob' && item.path.endsWith('.md')
         );
 
-        // Group by top-level folder; root files go in '' key
-        const groups = {};
+        // Build a recursive node tree:
+        // Each node: { _files: [...], subfolderName: node, ... }
+        const root = { _files: [] };
+
         for (const file of mdFiles) {
             const parts = file.path.split('/');
-            const folder = parts.length > 1 ? parts[0] : '';
-            if (!groups[folder]) groups[folder] = [];
-            groups[folder].push(file);
+            let node = root;
+            // Walk/create nodes for each folder segment
+            for (let i = 0; i < parts.length - 1; i++) {
+                const seg = parts[i];
+                if (!node[seg]) node[seg] = { _files: [] };
+                node = node[seg];
+            }
+            node._files.push(file);
         }
 
-        return groups;
+        return root;
     }
 
     /* ================================================================
@@ -723,31 +748,72 @@
         return hash.replace(/^#/, '') + '.md';
     }
 
-    function renderSidebar(groups, activeHash) {
+    // Recursively check if a node (or any descendant) contains the active file
+    function nodeContainsActive(node, activeHash) {
+        if (node._files.some(f => hashFromPath(f.path) === activeHash)) return true;
+        for (const key of Object.keys(node).filter(k => k !== '_files')) {
+            if (nodeContainsActive(node[key], activeHash)) return true;
+        }
+        return false;
+    }
+
+    // Recursively render a tree node into HTML
+    function renderNode(node, activeHash, savedFolderState, folderPath) {
+        let html = '';
+
+        // Files at this level first
+        if (node._files.length > 0) {
+            for (const file of node._files) {
+                const hash = hashFromPath(file.path);
+                const isActive = hash === activeHash ? ' active' : '';
+                html += `<a class="sidebar-link${isActive}" href="${hash}" data-path="${file.path}" data-sha="${file.sha}">${formatFileName(file.path)}</a>`;
+            }
+        }
+
+        // Subfolders
+        const subfolders = Object.keys(node).filter(k => k !== '_files').sort();
+        for (const subfolder of subfolders) {
+            const child = node[subfolder];
+            const fullPath = folderPath ? `${folderPath}/${subfolder}` : subfolder;
+            const hasActive = nodeContainsActive(child, activeHash);
+            const isOpen = hasActive || (savedFolderState[fullPath] !== false);
+
+            html += `<div class="sidebar-group${isOpen ? ' open' : ''}" data-folder="${fullPath}">`;
+            html += `<div class="sidebar-group-header">`;
+            html += `<span>${formatFolderName(subfolder)}</span>`;
+            html += `<span class="chevron">&#9654;</span>`;
+            html += `</div>`;
+            html += `<div class="sidebar-group-files">`;
+            html += renderNode(child, activeHash, savedFolderState, fullPath);
+            html += `</div></div>`;
+        }
+
+        return html;
+    }
+
+    function renderSidebar(root, activeHash) {
         const container = document.getElementById('sidebar-content');
         const savedFolderState = JSON.parse(localStorage.getItem(LS_FOLDER) || '{}');
         let html = '';
 
-        // Root-level files first (no folder)
-        if (groups[''] && groups[''].length > 0) {
+        // Root-level files first
+        if (root._files.length > 0) {
             html += '<div class="sidebar-root-files">';
-            for (const file of groups['']) {
+            for (const file of root._files) {
                 const hash = hashFromPath(file.path);
                 const isActive = hash === activeHash ? ' active' : '';
                 html += `<a class="sidebar-link${isActive}" href="${hash}" data-path="${file.path}" data-sha="${file.sha}">${formatFileName(file.path)}</a>`;
             }
             html += '</div>';
-            if (Object.keys(groups).filter(k => k !== '').length > 0) {
-                html += '<div class="sidebar-divider"></div>';
-            }
+            const hasFolders = Object.keys(root).filter(k => k !== '_files').length > 0;
+            if (hasFolders) html += '<div class="sidebar-divider"></div>';
         }
 
-        // Folder groups
-        const folders = Object.keys(groups).filter(k => k !== '').sort();
-        for (const folder of folders) {
-            // Default: open if any file in this folder is active, or if saved as open
-            const folderFiles = groups[folder];
-            const hasActive = folderFiles.some(f => hashFromPath(f.path) === activeHash);
+        // Top-level folders (recursive)
+        const topFolders = Object.keys(root).filter(k => k !== '_files').sort();
+        for (const folder of topFolders) {
+            const child = root[folder];
+            const hasActive = nodeContainsActive(child, activeHash);
             const isOpen = hasActive || (savedFolderState[folder] !== false);
 
             html += `<div class="sidebar-group${isOpen ? ' open' : ''}" data-folder="${folder}">`;
@@ -756,14 +822,7 @@
             html += `<span class="chevron">&#9654;</span>`;
             html += `</div>`;
             html += `<div class="sidebar-group-files">`;
-
-            for (const file of folderFiles) {
-                const hash = hashFromPath(file.path);
-                const isActive = hash === activeHash ? ' active' : '';
-                const name = formatFileName(file.path);
-                html += `<a class="sidebar-link${isActive}" href="${hash}" data-path="${file.path}" data-sha="${file.sha}">${name}</a>`;
-            }
-
+            html += renderNode(child, activeHash, savedFolderState, folder);
             html += `</div></div>`;
         }
 
@@ -790,10 +849,8 @@
                 e.preventDefault();
                 const path = this.dataset.path;
                 const sha  = this.dataset.sha;
-                // Update active state visually
                 container.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
                 this.classList.add('active');
-                // Update hash
                 history.pushState(null, '', hashFromPath(path));
                 loadFile(path, sha);
             });
@@ -886,10 +943,14 @@
         return window.location.hash || ('#' + DEFAULT_FILE.replace(/\.md$/, ''));
     }
 
-    function findFileByPath(groups, path) {
-        for (const files of Object.values(groups)) {
-            const found = files.find(f => f.path === path);
-            if (found) return found;
+    function findFileByPath(node, path) {
+        // Search _files at this level
+        const found = node._files.find(f => f.path === path);
+        if (found) return found;
+        // Recurse into subfolders
+        for (const key of Object.keys(node).filter(k => k !== '_files')) {
+            const result = findFileByPath(node[key], path);
+            if (result) return result;
         }
         return null;
     }
