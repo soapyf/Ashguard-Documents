@@ -493,6 +493,113 @@
         }
 
         /* ============================================================
+           WIKI HOME INDEX
+        ============================================================ */
+        #home-index h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        #home-index .home-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+        }
+
+        .index-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .index-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 18px 20px;
+            transition: box-shadow 0.15s ease, transform 0.15s ease;
+        }
+
+        .index-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        [data-theme="dark"] .index-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+
+        .index-card-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .index-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .index-card li { margin-bottom: 2px; }
+
+        .index-card a {
+            display: block;
+            padding: 5px 8px;
+            border-radius: 5px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: background 0.12s ease;
+        }
+
+        .index-card a:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .index-card .subfolder-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin: 10px 0 3px 8px;
+        }
+
+        /* Sidebar Home link */
+        .sidebar-home-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 6px;
+            margin: 4px 8px 2px;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .sidebar-home-link:hover {
+            background: var(--sidebar-hover);
+            color: var(--text-primary);
+        }
+
+        .sidebar-home-link.active {
+            background: var(--sidebar-active);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* ============================================================
            RESPONSIVE — MOBILE
         ============================================================ */
         @media (max-width: 768px) {
@@ -554,7 +661,9 @@
         <!-- Sidebar navigation -->
         <nav id="sidebar" aria-label="Documentation navigation">
             <div id="sidebar-content">
-                <div id="content-state" style="min-height:80px;">Loading…</div>
+                <a href="#home" class="sidebar-home-link" id="sidebar-home-btn">&#8962; Home</a>
+                <div class="sidebar-divider"></div>
+                <div style="padding:8px 16px;color:rgba(128,128,128,0.6);font-size:0.8rem;">Loading…</div>
             </div>
         </nav>
 
@@ -584,6 +693,7 @@
     const API_TREE_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${REPO_BRANCH}?recursive=1`;
     const RAW_BASE    = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}`;
     const DEFAULT_FILE = 'HOME.md';
+    const HOME_HASH = '#home';
 
     const LS_THEME   = 'ashguard-theme';
     const LS_ETAG    = 'ashguard-etag';
@@ -937,10 +1047,83 @@
     }
 
     /* ================================================================
+       WIKI HOME INDEX RENDERER
+    ================================================================ */
+    function renderCardFiles(files) {
+        if (!files || files.length === 0) return '';
+        return files.map(f =>
+            `<li><a href="${hashFromPath(f.path)}" data-path="${f.path}" data-sha="${f.sha}">${formatFileName(f.path)}</a></li>`
+        ).join('');
+    }
+
+    function renderCardNode(node, depth) {
+        let html = '';
+        // Files at this level
+        if (node._files.length > 0) {
+            html += `<ul>${renderCardFiles(node._files)}</ul>`;
+        }
+        // Subfolders
+        const subs = Object.keys(node).filter(k => k !== '_files').sort();
+        for (const sub of subs) {
+            html += `<div class="subfolder-label">${formatFolderName(sub)}</div>`;
+            html += renderCardNode(node[sub], depth + 1);
+        }
+        return html;
+    }
+
+    function renderHomeIndex(root) {
+        const contentEl = document.getElementById('content');
+        const topFolders = Object.keys(root).filter(k => k !== '_files').sort();
+
+        let html = '<div id="home-index">';
+        html += '<h1>Ashguard Documents</h1>';
+        html += '<p class="home-subtitle">Browse documentation by section below.</p>';
+        html += '<div class="index-grid">';
+
+        // Root-level files as their own card
+        if (root._files.length > 0) {
+            html += '<div class="index-card">';
+            html += '<div class="index-card-title">General</div>';
+            html += `<ul>${renderCardFiles(root._files)}</ul>`;
+            html += '</div>';
+        }
+
+        // One card per top-level folder
+        for (const folder of topFolders) {
+            html += '<div class="index-card">';
+            html += `<div class="index-card-title">${formatFolderName(folder)}</div>`;
+            html += renderCardNode(root[folder], 0);
+            html += '</div>';
+        }
+
+        html += '</div></div>';
+        contentEl.innerHTML = html;
+
+        // Wire up link clicks so they use the SPA router
+        contentEl.querySelectorAll('a[data-path]').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const path = this.dataset.path;
+                const sha  = this.dataset.sha;
+                const hash = hashFromPath(path);
+                history.pushState(null, '', hash);
+                renderSidebar(root, hash);
+                updateHomeLinkState(false);
+                loadFile(path, sha);
+            });
+        });
+    }
+
+    function updateHomeLinkState(isHome) {
+        const btn = document.getElementById('sidebar-home-btn');
+        if (btn) btn.classList.toggle('active', isHome);
+    }
+
+    /* ================================================================
        ROUTING — resolve path from current URL hash
     ================================================================ */
     function getCurrentHash() {
-        return window.location.hash || ('#' + DEFAULT_FILE.replace(/\.md$/, ''));
+        return window.location.hash || HOME_HASH;
     }
 
     function findFileByPath(node, path) {
@@ -972,37 +1155,59 @@
             return;
         }
 
-        const groups = buildFileMap(treeData);
+        const root = buildFileMap(treeData);
         const currentHash = getCurrentHash();
-        renderSidebar(groups, currentHash);
+        const isHome = currentHash === HOME_HASH;
+        renderSidebar(root, isHome ? '' : currentHash);
+        updateHomeLinkState(isHome);
 
-        // Load initial file from hash
-        const targetPath = pathFromHash(currentHash);
-        const file = findFileByPath(groups, targetPath);
+        // Wire up the Home button in sidebar
+        const homeBtn = document.getElementById('sidebar-home-btn');
+        if (homeBtn) {
+            homeBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                history.pushState(null, '', HOME_HASH);
+                renderSidebar(root, '');
+                updateHomeLinkState(true);
+                renderHomeIndex(root);
+                scrollToTop();
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').classList.remove('open');
+                    document.getElementById('sidebar-backdrop').classList.remove('visible');
+                }
+            });
+        }
 
-        if (file) {
-            loadFile(file.path, file.sha);
-        } else if (currentHash !== '#' + DEFAULT_FILE.replace(/\.md$/, '')) {
-            // Hash not found — try default
-            const defaultFile = findFileByPath(groups, DEFAULT_FILE);
-            if (defaultFile) {
-                history.replaceState(null, '', hashFromPath(defaultFile.path));
-                renderSidebar(groups, hashFromPath(defaultFile.path));
-                loadFile(defaultFile.path, defaultFile.sha);
-            } else {
-                contentEl.innerHTML = '<div id="content-state">Page not found.</div>';
-            }
+        // Load initial page
+        if (isHome) {
+            renderHomeIndex(root);
         } else {
-            contentEl.innerHTML = '<div id="content-state">Page not found.</div>';
+            const targetPath = pathFromHash(currentHash);
+            const file = findFileByPath(root, targetPath);
+            if (file) {
+                loadFile(file.path, file.sha);
+            } else {
+                // Hash not found — fall back to home index
+                history.replaceState(null, '', HOME_HASH);
+                updateHomeLinkState(true);
+                renderHomeIndex(root);
+            }
         }
 
         // Handle browser back/forward navigation
         window.addEventListener('popstate', function () {
             const hash = getCurrentHash();
-            const path = pathFromHash(hash);
-            const file = findFileByPath(groups, path);
-            renderSidebar(groups, hash);
-            if (file) loadFile(file.path, file.sha);
+            const isHome = hash === HOME_HASH;
+            renderSidebar(root, isHome ? '' : hash);
+            updateHomeLinkState(isHome);
+            if (isHome) {
+                renderHomeIndex(root);
+                scrollToTop();
+            } else {
+                const path = pathFromHash(hash);
+                const file = findFileByPath(root, path);
+                if (file) loadFile(file.path, file.sha);
+            }
         });
     }
 
