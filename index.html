@@ -26,11 +26,11 @@
             --text-muted: #adb5bd;
             --border-color: #dee2e6;
             --card-bg: #ffffff;
-            --sidebar-bg-start: #1a1a2e;
-            --sidebar-bg-end: #16213e;
-            --sidebar-text: rgba(255, 255, 255, 0.8);
-            --sidebar-hover: rgba(255, 255, 255, 0.1);
-            --sidebar-active: rgba(255, 255, 255, 0.18);
+            --sidebar-bg-start: #ffffff;
+            --sidebar-bg-end: #ffffff;
+            --sidebar-text: #495057;
+            --sidebar-hover: rgba(0, 0, 0, 0.06);
+            --sidebar-active: rgba(0, 0, 0, 0.1);
             --gray-35: #2D2F31;
             --gray-40: #404346;
             --gray-70: #DCE0E3;
@@ -80,7 +80,7 @@
             left: 0;
             right: 0;
             height: 56px;
-            background: linear-gradient(135deg, var(--sidebar-bg-start) 0%, var(--sidebar-bg-end) 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -270,7 +270,8 @@
             left: 0;
             bottom: 0;
             width: 280px;
-            background: linear-gradient(135deg, var(--sidebar-bg-start) 0%, var(--sidebar-bg-end) 100%);
+            background: var(--sidebar-bg-start);
+            border-right: 1px solid var(--border-color);
             overflow-y: auto;
             z-index: 100;
             transition: transform 0.3s ease, background 0.3s ease;
@@ -292,7 +293,7 @@
             justify-content: space-between;
             padding: 9px 20px;
             cursor: pointer;
-            color: rgba(255, 255, 255, 0.55);
+            color: var(--text-muted);
             font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
@@ -303,7 +304,7 @@
         }
 
         .sidebar-group-header:hover {
-            color: rgba(255, 255, 255, 0.8);
+            color: var(--text-primary);
         }
 
         .sidebar-group-header .chevron {
@@ -346,18 +347,18 @@
 
         .sidebar-link:hover {
             background: var(--sidebar-hover);
-            color: #fff;
+            color: var(--text-primary);
         }
 
         .sidebar-link.active {
             background: var(--sidebar-active);
-            color: #fff;
+            color: var(--text-primary);
             font-weight: 500;
         }
 
         .sidebar-divider {
             height: 1px;
-            background: rgba(255,255,255,0.06);
+            background: var(--border-color);
             margin: 8px 16px;
         }
 
@@ -384,6 +385,9 @@
             flex: 1;
             min-width: 0;
             padding: 40px 48px;
+        }
+
+        #content {
             max-width: 900px;
         }
 
@@ -397,6 +401,7 @@
         #content li { margin-bottom: 4px; line-height: 1.65; }
         #content a { color: #4da6ff; text-decoration: none; }
         #content a:hover { text-decoration: underline; }
+        #content img { max-width: 100%; height: auto; display: block; }
         #content strong { font-weight: 600; }
         #content em { font-style: italic; }
         #content hr { border: none; border-top: 1px solid var(--border-color); margin: 28px 0; }
@@ -546,6 +551,10 @@
 
     <!-- marked.js (markdown parser) -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // Match GitHub's rendering: single newlines become <br>, GFM tables/strikethrough enabled
+        marked.use({ breaks: true, gfm: true });
+    </script>
 
     <script>
     /* ================================================================
@@ -556,7 +565,7 @@
     const REPO_BRANCH = 'main';
     const API_TREE_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${REPO_BRANCH}?recursive=1`;
     const RAW_BASE    = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${REPO_BRANCH}`;
-    const DEFAULT_FILE = 'README.md';
+    const DEFAULT_FILE = 'WELCOME.md';
 
     const LS_THEME   = 'ashguard-theme';
     const LS_ETAG    = 'ashguard-etag';
@@ -792,6 +801,31 @@
     }
 
     /* ================================================================
+       IMAGE URL REWRITING
+       Rewrites relative image paths in markdown to absolute
+       raw.githubusercontent.com URLs based on the file's directory.
+    ================================================================ */
+    function resolveImageUrls(markdown, filePath) {
+        const dir = filePath.includes('/')
+            ? filePath.substring(0, filePath.lastIndexOf('/') + 1)
+            : '';
+
+        // Rewrite markdown image syntax: ![alt](relative/path)
+        markdown = markdown.replace(
+            /!\[([^\]]*)\]\((?!https?:\/\/|data:)([^)]+)\)/g,
+            (match, alt, src) => `![${alt}](${RAW_BASE}/${dir}${src})`
+        );
+
+        // Rewrite HTML <img src="..."> tags (in case markdown contains raw HTML)
+        markdown = markdown.replace(
+            /<img([^>]*)\ssrc=["'](?!https?:\/\/|data:)([^"']+)["']/gi,
+            (match, attrs, src) => `<img${attrs} src="${RAW_BASE}/${dir}${src}"`
+        );
+
+        return markdown;
+    }
+
+    /* ================================================================
        FILE FETCHING WITH SHA-BASED CACHE
     ================================================================ */
     async function loadFile(path, sha) {
@@ -801,7 +835,7 @@
         const cacheKey = FILE_CACHE_PREFIX + sha;
         const cached = localStorage.getItem(cacheKey);
         if (cached) {
-            contentEl.innerHTML = marked.parse(cached);
+            contentEl.innerHTML = marked.parse(resolveImageUrls(cached, path));
             scrollToTop();
             return;
         }
@@ -827,7 +861,7 @@
             try { localStorage.setItem(cacheKey, text); } catch (_) { /* ignore */ }
         }
 
-        contentEl.innerHTML = marked.parse(text);
+        contentEl.innerHTML = marked.parse(resolveImageUrls(text, path));
         scrollToTop();
     }
 
