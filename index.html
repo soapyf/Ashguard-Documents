@@ -961,6 +961,7 @@
                 const sha  = this.dataset.sha;
                 container.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
                 this.classList.add('active');
+                updateHomeLinkState(false);
                 history.pushState(null, '', hashFromPath(path));
                 loadFile(path, sha);
             });
