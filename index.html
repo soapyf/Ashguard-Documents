@@ -402,7 +402,7 @@
             margin-left: 280px;
             flex: 1;
             min-width: 0;
-            padding: 40px 48px;
+            padding: 40px 48px 80px;
         }
 
         #content {
@@ -480,6 +480,26 @@
 
         [data-theme="dark"] #content tr:nth-child(even) td {
             background: rgba(255,255,255,0.03);
+        }
+
+        /* Source link footer */
+        .source-link-bar {
+            margin-top: 40px;
+            padding-top: 16px;
+            padding-bottom: 24px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .source-link-bar a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .source-link-bar a:hover {
+            color: var(--text-secondary);
+            text-decoration: underline;
         }
 
         /* State messages */
@@ -564,13 +584,34 @@
             background: var(--bg-tertiary);
         }
 
-        .index-card .subfolder-label {
-            font-size: 0.68rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .index-card .folder-link {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .index-card .folder-link::before {
+            content: '';
+        }
+
+        /* Section index breadcrumb */
+        .section-breadcrumb {
+            font-size: 0.85rem;
             color: var(--text-muted);
-            margin: 10px 0 3px 8px;
+            margin-bottom: 20px;
+        }
+
+        .section-breadcrumb a {
+            color: #4da6ff;
+            text-decoration: none;
+        }
+
+        .section-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .section-breadcrumb span {
+            margin: 0 6px;
+            opacity: 0.5;
         }
 
         /* Sidebar Home link */
@@ -660,7 +701,7 @@
 
         <!-- Sidebar navigation -->
         <nav id="sidebar" aria-label="Documentation navigation">
-            <a href="#home" class="sidebar-home-link" id="sidebar-home-btn">&#8962; Home</a>
+            <a href="#home" class="sidebar-home-link" id="sidebar-home-btn">Home</a>
             <div class="sidebar-divider"></div>
             <div id="sidebar-content">
                 <div style="padding:8px 16px;color:rgba(128,128,128,0.6);font-size:0.8rem;">Loading…</div>
@@ -996,6 +1037,14 @@
     /* ================================================================
        FILE FETCHING WITH SHA-BASED CACHE
     ================================================================ */
+    function appendSourceLink(contentEl, path) {
+        const githubUrl = `https://github.com/${REPO_OWNER}/${REPO_NAME}/blob/${REPO_BRANCH}/${path}`;
+        const bar = document.createElement('div');
+        bar.className = 'source-link-bar';
+        bar.innerHTML = `<a href="${githubUrl}" target="_blank" rel="noopener">View source on GitHub &rarr;</a>`;
+        contentEl.appendChild(bar);
+    }
+
     async function loadFile(path, sha) {
         const contentEl = document.getElementById('content');
 
@@ -1004,6 +1053,7 @@
         const cached = localStorage.getItem(cacheKey);
         if (cached) {
             contentEl.innerHTML = marked.parse(resolveImageUrls(cached, path));
+            appendSourceLink(contentEl, path);
             scrollToTop();
             return;
         }
@@ -1030,6 +1080,7 @@
         }
 
         contentEl.innerHTML = marked.parse(resolveImageUrls(text, path));
+        appendSourceLink(contentEl, path);
         scrollToTop();
     }
 
@@ -1050,57 +1101,58 @@
     /* ================================================================
        WIKI HOME INDEX RENDERER
     ================================================================ */
-    function renderCardFiles(files) {
-        if (!files || files.length === 0) return '';
-        return files.map(f =>
-            `<li><a href="${hashFromPath(f.path)}" data-path="${f.path}" data-sha="${f.sha}">${formatFileName(f.path)}</a></li>`
-        ).join('');
+
+    // Hash used for folder index pages
+    const DIR_PREFIX = '#dir/';
+
+    function dirHash(folderPath) {
+        return DIR_PREFIX + folderPath;
     }
 
-    function renderCardNode(node, depth) {
-        let html = '';
-        // Files at this level
-        if (node._files.length > 0) {
-            html += `<ul>${renderCardFiles(node._files)}</ul>`;
+    function isDirHash(hash) {
+        return hash.startsWith(DIR_PREFIX);
+    }
+
+    function folderPathFromDirHash(hash) {
+        return hash.slice(DIR_PREFIX.length);
+    }
+
+    // Get a node from the root by a slash-separated path
+    function getNodeByPath(root, folderPath) {
+        const parts = folderPath.split('/').filter(Boolean);
+        let node = root;
+        for (const part of parts) {
+            if (!node[part]) return null;
+            node = node[part];
         }
-        // Subfolders
+        return node;
+    }
+
+    // Render the immediate contents of a node into card list HTML (shallow)
+    function renderShallowCardContents(node, nodePath) {
+        let html = '<ul>';
+
+        // Files at this level
+        for (const f of node._files) {
+            html += `<li><a href="${hashFromPath(f.path)}" data-path="${f.path}" data-sha="${f.sha}">${formatFileName(f.path)}</a></li>`;
+        }
+
+        // Subfolders as folder links (navigate to section index)
         const subs = Object.keys(node).filter(k => k !== '_files').sort();
         for (const sub of subs) {
-            html += `<div class="subfolder-label">${formatFolderName(sub)}</div>`;
-            html += renderCardNode(node[sub], depth + 1);
+            const subPath = nodePath ? `${nodePath}/${sub}` : sub;
+            html += `<li><a href="${dirHash(subPath)}" class="folder-link" data-dir="${subPath}">${formatFolderName(sub)}</a></li>`;
         }
+
+        html += '</ul>';
         return html;
     }
 
-    function renderHomeIndex(root) {
+    // Wire up all clickable links inside #content for index pages
+    function wireIndexLinks(root) {
         const contentEl = document.getElementById('content');
-        const topFolders = Object.keys(root).filter(k => k !== '_files').sort();
 
-        let html = '<div id="home-index">';
-        html += '<h1>Ashguard Documents</h1>';
-        html += '<p class="home-subtitle">Browse documentation by section below.</p>';
-        html += '<div class="index-grid">';
-
-        // Root-level files as their own card
-        if (root._files.length > 0) {
-            html += '<div class="index-card">';
-            html += '<div class="index-card-title">General</div>';
-            html += `<ul>${renderCardFiles(root._files)}</ul>`;
-            html += '</div>';
-        }
-
-        // One card per top-level folder
-        for (const folder of topFolders) {
-            html += '<div class="index-card">';
-            html += `<div class="index-card-title">${formatFolderName(folder)}</div>`;
-            html += renderCardNode(root[folder], 0);
-            html += '</div>';
-        }
-
-        html += '</div></div>';
-        contentEl.innerHTML = html;
-
-        // Wire up link clicks so they use the SPA router
+        // File links
         contentEl.querySelectorAll('a[data-path]').forEach(link => {
             link.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -1113,6 +1165,125 @@
                 loadFile(path, sha);
             });
         });
+
+        // Folder links
+        contentEl.querySelectorAll('a[data-dir]').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const dirPath = this.dataset.dir;
+                const hash = dirHash(dirPath);
+                history.pushState(null, '', hash);
+                updateHomeLinkState(false);
+                renderSectionIndex(root, dirPath);
+                scrollToTop();
+            });
+        });
+
+        // Breadcrumb home link
+        contentEl.querySelectorAll('a[data-home]').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                history.pushState(null, '', HOME_HASH);
+                renderSidebar(root, '');
+                updateHomeLinkState(true);
+                renderHomeIndex(root);
+                scrollToTop();
+            });
+        });
+
+        // Breadcrumb ancestor dir links
+        contentEl.querySelectorAll('a[data-breadcrumb-dir]').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                const dirPath = this.dataset.breadcrumbDir;
+                const hash = dirHash(dirPath);
+                history.pushState(null, '', hash);
+                updateHomeLinkState(false);
+                renderSectionIndex(root, dirPath);
+                scrollToTop();
+            });
+        });
+    }
+
+    function renderHomeIndex(root) {
+        const contentEl = document.getElementById('content');
+        const topFolders = Object.keys(root).filter(k => k !== '_files').sort();
+
+        let html = '<div id="home-index">';
+        html += '<h1>Ashguard Documents</h1>';
+        html += '<p class="home-subtitle">This site is the official Ashguard documentation hub, a reference for players covering equipment stats, rules, and expectations. All source documents are publicly available on GitHub; you\'ll find a direct link at the bottom of every page along with the full commit and change history.</p>';
+        html += '<div class="index-grid">';
+
+        // Root-level files as their own card
+        if (root._files.length > 0) {
+            html += '<div class="index-card">';
+            html += '<div class="index-card-title">General</div>';
+            html += renderShallowCardContents({ _files: root._files }, '');
+            html += '</div>';
+        }
+
+        // One card per top-level folder — shallow contents only
+        for (const folder of topFolders) {
+            html += '<div class="index-card">';
+            html += `<div class="index-card-title"><a href="${dirHash(folder)}" data-dir="${folder}" style="color:inherit;text-decoration:none;">${formatFolderName(folder)}</a></div>`;
+            html += renderShallowCardContents(root[folder], folder);
+            html += '</div>';
+        }
+
+        html += '</div></div>';
+        contentEl.innerHTML = html;
+        wireIndexLinks(root);
+    }
+
+    function renderSectionIndex(root, folderPath) {
+        const contentEl = document.getElementById('content');
+        const node = getNodeByPath(root, folderPath);
+        if (!node) {
+            contentEl.innerHTML = '<div id="content-state">Section not found.</div>';
+            return;
+        }
+
+        // Build breadcrumb: Home > Folder > Subfolder
+        const parts = folderPath.split('/');
+        let breadcrumb = `<a href="${HOME_HASH}" data-home="1">Home</a>`;
+        let accumulated = '';
+        for (let i = 0; i < parts.length; i++) {
+            accumulated = accumulated ? `${accumulated}/${parts[i]}` : parts[i];
+            breadcrumb += `<span>›</span>`;
+            if (i < parts.length - 1) {
+                breadcrumb += `<a href="${dirHash(accumulated)}" data-breadcrumb-dir="${accumulated}">${formatFolderName(parts[i])}</a>`;
+            } else {
+                breadcrumb += `<strong>${formatFolderName(parts[i])}</strong>`;
+            }
+        }
+
+        let html = '<div id="home-index">';
+        html += `<div class="section-breadcrumb">${breadcrumb}</div>`;
+        html += `<h1>${formatFolderName(parts[parts.length - 1])}</h1>`;
+        html += '<p class="home-subtitle">Browse this section below.</p>';
+        html += '<div class="index-grid">';
+
+        // Files at this level as their own card
+        if (node._files.length > 0) {
+            html += '<div class="index-card">';
+            html += '<div class="index-card-title">Pages</div>';
+            html += renderShallowCardContents({ _files: node._files, }, folderPath);
+            html += '</div>';
+        }
+
+        // Each immediate subfolder as a card
+        const subs = Object.keys(node).filter(k => k !== '_files').sort();
+        for (const sub of subs) {
+            const subPath = `${folderPath}/${sub}`;
+            html += '<div class="index-card">';
+            html += `<div class="index-card-title"><a href="${dirHash(subPath)}" data-dir="${subPath}" style="color:inherit;text-decoration:none;">${formatFolderName(sub)}</a></div>`;
+            html += renderShallowCardContents(node[sub], subPath);
+            html += '</div>';
+        }
+
+        html += '</div></div>';
+        contentEl.innerHTML = html;
+        wireIndexLinks(root);
     }
 
     function updateHomeLinkState(isHome) {
@@ -1182,6 +1353,9 @@
         // Load initial page
         if (isHome) {
             renderHomeIndex(root);
+        } else if (isDirHash(currentHash)) {
+            updateHomeLinkState(false);
+            renderSectionIndex(root, folderPathFromDirHash(currentHash));
         } else {
             const targetPath = pathFromHash(currentHash);
             const file = findFileByPath(root, targetPath);
@@ -1203,6 +1377,10 @@
             updateHomeLinkState(isHome);
             if (isHome) {
                 renderHomeIndex(root);
+                scrollToTop();
+            } else if (isDirHash(hash)) {
+                updateHomeLinkState(false);
+                renderSectionIndex(root, folderPathFromDirHash(hash));
                 scrollToTop();
             } else {
                 const path = pathFromHash(hash);
