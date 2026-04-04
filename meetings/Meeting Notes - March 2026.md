@@ -28,7 +28,7 @@ Phanuealle Dust is working on the Broodmother, a new bug-based rifle. More detai
 
 ### Crystal Tome
 
-Skullphern released the Crystal Tome, a special all-layers weapon and the first to use the book model and animations. It has no mote cost prerequisite and uses all three of your layers, relying on your mana. There are lots of abilities in there you will thoroughly enjoy.
+Skullphern released the Crystal Tome, a special all-layers weapon and the first to use the book model and animations. It has a no-mote cost prerequisite (the Levitation spell) and uses all three of your layers, relying on your mana. There are lots of abilities in there you will thoroughly enjoy.
 
 ### Veloth's Judgement Updates
 
@@ -52,6 +52,7 @@ Shiri has some free time, so we plan to have them build out our merit rewards. W
 | Skullphern         | E-4 → E-5 |
 | Fox Doji           | E-5 → E-6 |
 | Vile Whisper       | E-5 → E-6 |
+| Ritual Whisper     | E-5 > E-6 |
 | Mercurial Amethyst | E-6 → E-7 |
 | Keller             | E-6 → E-7 |
 
