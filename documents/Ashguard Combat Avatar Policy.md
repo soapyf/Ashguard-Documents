@@ -65,6 +65,6 @@ All combat avatars must be reviewed and approved by a commanding member before d
 
 ## Compliance Timeline
 
-All members will have roughly 3 weeks from the announcement date (Announced on April 4, 2026, Enacted May 4, 2026)  to build and submit their combat avatar for approval. After this time, you may be unable to participate in combat until you have completed your combat Ashguardian.
+All members will have roughly 3 weeks from the announcement date (announced on April 4, 2026, enacted May 4, 2026)  to build and submit their combat avatar for approval. After this time, you may be unable to participate in combat until you have completed your combat Ashguardian.
 
 ![Footer](images/footer.png)
