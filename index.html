@@ -896,7 +896,7 @@
     }
 
     function pathFromHash(hash) {
-        return hash.replace(/^#/, '') + '.md';
+        return decodeURIComponent(hash.replace(/^#/, '')) + '.md';
     }
 
     // Recursively check if a node (or any descendant) contains the active file
