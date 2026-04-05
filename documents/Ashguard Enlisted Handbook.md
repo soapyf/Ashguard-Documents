@@ -175,7 +175,7 @@ Officers have access to all equipment in the group, so if you ever need informat
 | Rank | Title                    |
 | ---- | ------------------------ |
 | O-1  | Commander \| Gaharud     |
-| C-1  | Elder Mage \| Ald'archag |
+| C-1  | Archmage \| Ald'archag |
 | C-2  | Hortator \| Hortator     |
 
 ### Cantons
