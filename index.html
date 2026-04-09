@@ -482,6 +482,48 @@
             background: rgba(255,255,255,0.03);
         }
 
+        /* Revision history link (inline with h1) */
+        .h1-with-revision {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .h1-with-revision h1 {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .commit-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.8rem;
+            text-decoration: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #21262d;
+            transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .commit-link:hover {
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.25);
+            background: #30363d;
+            text-decoration: none;
+        }
+
         /* Source link footer */
         .source-link-bar {
             margin-top: 40px;
@@ -640,6 +682,31 @@
             font-weight: 600;
         }
 
+        /* Sim Rules pinned link */
+        .sidebar-pinned-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-size: 0.875rem;
+            border-radius: 6px;
+            margin: 2px 8px 2px;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .sidebar-pinned-link:hover {
+            background: var(--sidebar-hover);
+            color: var(--text-primary);
+        }
+
+        .sidebar-pinned-link.active {
+            background: var(--sidebar-active);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
         /* ============================================================
            RESPONSIVE — MOBILE
         ============================================================ */
@@ -702,6 +769,7 @@
         <!-- Sidebar navigation -->
         <nav id="sidebar" aria-label="Documentation navigation">
             <a href="#home" class="sidebar-home-link" id="sidebar-home-btn">Home</a>
+            <a href="#documents/Ashguard Combat Rules" class="sidebar-pinned-link" id="sidebar-simrules-btn">Sim Rules</a>
             <div class="sidebar-divider"></div>
             <div id="sidebar-content">
                 <div style="padding:8px 16px;color:rgba(128,128,128,0.6);font-size:0.8rem;">Loading…</div>
@@ -1045,6 +1113,22 @@
         contentEl.appendChild(bar);
     }
 
+    function injectRevisionLink(contentEl, path) {
+        const h1 = contentEl.querySelector('h1');
+        if (!h1) return;
+        const link = document.createElement('a');
+        link.className = 'commit-link';
+        link.href = `https://github.com/${REPO_OWNER}/${REPO_NAME}/commits/${REPO_BRANCH}/${path}`;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.innerHTML = `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.93 8.5a4.002 4.002 0 0 1-7.86 0H.75a.75.75 0 0 1 0-1.5h3.32a4.002 4.002 0 0 1 7.86 0h3.32a.75.75 0 0 1 0 1.5Zm-1.43-.75a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"/></svg> Revision history`;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'h1-with-revision';
+        h1.parentNode.insertBefore(wrapper, h1);
+        wrapper.appendChild(h1);
+        wrapper.appendChild(link);
+    }
+
     async function loadFile(path, sha) {
         const contentEl = document.getElementById('content');
 
@@ -1054,6 +1138,7 @@
         if (cached) {
             contentEl.innerHTML = marked.parse(resolveImageUrls(cached, path));
             appendSourceLink(contentEl, path);
+            injectRevisionLink(contentEl, path);
             scrollToTop();
             return;
         }
@@ -1081,6 +1166,7 @@
 
         contentEl.innerHTML = marked.parse(resolveImageUrls(text, path));
         appendSourceLink(contentEl, path);
+        injectRevisionLink(contentEl, path);
         scrollToTop();
     }
 
@@ -1286,9 +1372,17 @@
         wireIndexLinks(root);
     }
 
+    const SIM_RULES_PATH = 'documents/Ashguard Combat Rules.md';
+    const SIM_RULES_HASH = '#documents/Ashguard Combat Rules';
+
     function updateHomeLinkState(isHome) {
         const btn = document.getElementById('sidebar-home-btn');
         if (btn) btn.classList.toggle('active', isHome);
+    }
+
+    function updateSimRulesLinkState(isActive) {
+        const btn = document.getElementById('sidebar-simrules-btn');
+        if (btn) btn.classList.toggle('active', isActive);
     }
 
     /* ================================================================
@@ -1330,8 +1424,30 @@
         const root = buildFileMap(treeData);
         const currentHash = getCurrentHash();
         const isHome = currentHash === HOME_HASH;
+        const isSimRules = currentHash === SIM_RULES_HASH;
         renderSidebar(root, isHome ? '' : currentHash);
         updateHomeLinkState(isHome);
+        updateSimRulesLinkState(isSimRules);
+
+        // Wire up the Sim Rules pinned button
+        const simRulesBtn = document.getElementById('sidebar-simrules-btn');
+        if (simRulesBtn) {
+            simRulesBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                history.pushState(null, '', SIM_RULES_HASH);
+                const file = findFileByPath(root, SIM_RULES_PATH);
+                if (file) {
+                    renderSidebar(root, SIM_RULES_HASH);
+                    updateHomeLinkState(false);
+                    updateSimRulesLinkState(true);
+                    loadFile(file.path, file.sha);
+                }
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').classList.remove('open');
+                    document.getElementById('sidebar-backdrop').classList.remove('visible');
+                }
+            });
+        }
 
         // Wire up the Home button in sidebar
         const homeBtn = document.getElementById('sidebar-home-btn');
@@ -1341,6 +1457,7 @@
                 history.pushState(null, '', HOME_HASH);
                 renderSidebar(root, '');
                 updateHomeLinkState(true);
+                updateSimRulesLinkState(false);
                 renderHomeIndex(root);
                 scrollToTop();
                 if (window.innerWidth <= 768) {
@@ -1355,6 +1472,7 @@
             renderHomeIndex(root);
         } else if (isDirHash(currentHash)) {
             updateHomeLinkState(false);
+            updateSimRulesLinkState(false);
             renderSectionIndex(root, folderPathFromDirHash(currentHash));
         } else {
             const targetPath = pathFromHash(currentHash);
@@ -1365,6 +1483,7 @@
                 // Hash not found — fall back to home index
                 history.replaceState(null, '', HOME_HASH);
                 updateHomeLinkState(true);
+                updateSimRulesLinkState(false);
                 renderHomeIndex(root);
             }
         }
@@ -1373,13 +1492,16 @@
         window.addEventListener('popstate', function () {
             const hash = getCurrentHash();
             const isHome = hash === HOME_HASH;
+            const isSimRules = hash === SIM_RULES_HASH;
             renderSidebar(root, isHome ? '' : hash);
             updateHomeLinkState(isHome);
+            updateSimRulesLinkState(isSimRules);
             if (isHome) {
                 renderHomeIndex(root);
                 scrollToTop();
             } else if (isDirHash(hash)) {
                 updateHomeLinkState(false);
+                updateSimRulesLinkState(false);
                 renderSectionIndex(root, folderPathFromDirHash(hash));
                 scrollToTop();
             } else {
