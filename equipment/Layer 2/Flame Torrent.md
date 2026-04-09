@@ -5,7 +5,7 @@
 | Layer               | L2R          |
 | Range               | 20m          |
 | Full Damage Range   | 5m           |
-| Cone                | 45°          |
+| Cone                | 45° (This is for detection. Objects and avatars must still be within 1.5m of center)         |
 | Avatar Damage       | 100          |
 | LBA Damage          | 10           |
 | Tick Rate           | 0.075s       |
