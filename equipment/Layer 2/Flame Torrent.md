@@ -25,13 +25,11 @@ Damage scales linearly from full to zero between the full damage range and max r
 
 > Avatar damage falls off from **5m → 20m**. LBA damage falls off from **7.5m → 20m**.
 
-```mermaid
-xychart-beta
-    title "Damage Falloff by Distance"
-    x-axis ["0m", "5m", "7.5m", "10m", "12.5m", "15m", "20m"]
-    y-axis "Avatar Damage" 0 --> 100
-    line [100, 100, 100, 67, 50, 33, 0]
-```
+<table>
+<tr>
+<td><img src="../images/flametorrentfalloff.png" alt="Diagram 1" width="800"></td>
+</tr>
+</table>
 
 ### Detection
 Continuously fires while the mouse button is held, consuming mana each tick. Detection uses a two-pass sensor system:
