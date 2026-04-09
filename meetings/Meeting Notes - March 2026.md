@@ -75,7 +75,7 @@ Ashguard is introducing a new policy change called the **Combat Avatar Policy**.
 The idea is to create a combat-focused avatar that promotes our group identity, is safe to use anywhere, and presents the group in the best light. This policy is non-intrusive, and full details can be found on our documentation hub:
 
 - **Documentation hub:** [https://docs.ashguard.net/](https://docs.ashguard.net/)
-- **Direct link to the policy:** [Ashguard Combat Avatar Policy](../documents/Ashguard%20Combat%20Avatar%20Policy.md)
+- **Direct link to the policy:** [Ashguard Combat Avatar Policy](https://docs.ashguard.net/#documents/Ashguard%20Combat%20Avatar%20Policy)
 
 If you have any questions about the policy, feel free to reach out to command staff.
 
