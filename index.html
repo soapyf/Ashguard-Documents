@@ -482,48 +482,6 @@
             background: rgba(255,255,255,0.03);
         }
 
-        /* Revision history link (inline with h1) */
-        .h1-with-revision {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .h1-with-revision h1 {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .commit-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            flex-shrink: 0;
-            color: rgba(255, 255, 255, 0.75);
-            font-size: 0.8rem;
-            text-decoration: none;
-            padding: 5px 12px;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: #21262d;
-            transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .commit-link:hover {
-            color: #ffffff;
-            border-color: rgba(255, 255, 255, 0.25);
-            background: #30363d;
-            text-decoration: none;
-        }
-
         /* Source link footer */
         .source-link-bar {
             margin-top: 40px;
@@ -1113,22 +1071,6 @@
         contentEl.appendChild(bar);
     }
 
-    function injectRevisionLink(contentEl, path) {
-        const h1 = contentEl.querySelector('h1');
-        if (!h1) return;
-        const link = document.createElement('a');
-        link.className = 'commit-link';
-        link.href = `https://github.com/${REPO_OWNER}/${REPO_NAME}/commits/${REPO_BRANCH}/${path}`;
-        link.target = '_blank';
-        link.rel = 'noopener';
-        link.innerHTML = `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11.93 8.5a4.002 4.002 0 0 1-7.86 0H.75a.75.75 0 0 1 0-1.5h3.32a4.002 4.002 0 0 1 7.86 0h3.32a.75.75 0 0 1 0 1.5Zm-1.43-.75a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"/></svg> Revision history`;
-        const wrapper = document.createElement('div');
-        wrapper.className = 'h1-with-revision';
-        h1.parentNode.insertBefore(wrapper, h1);
-        wrapper.appendChild(h1);
-        wrapper.appendChild(link);
-    }
-
     async function loadFile(path, sha) {
         const contentEl = document.getElementById('content');
 
@@ -1138,7 +1080,6 @@
         if (cached) {
             contentEl.innerHTML = marked.parse(resolveImageUrls(cached, path));
             appendSourceLink(contentEl, path);
-            injectRevisionLink(contentEl, path);
             scrollToTop();
             return;
         }
@@ -1166,7 +1107,6 @@
 
         contentEl.innerHTML = marked.parse(resolveImageUrls(text, path));
         appendSourceLink(contentEl, path);
-        injectRevisionLink(contentEl, path);
         scrollToTop();
     }
 
