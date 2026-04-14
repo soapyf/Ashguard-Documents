@@ -30,12 +30,12 @@ All Commands Are On Channel 1. Default keybinds are listed below.
 **Quick Fire (tap < 0.5s):** Fires a 5-shot burst of crystals that embed in surfaces they hit.
 - Mana Cost: 0
 
-**Charged (hold > 0.5s):** Fires a close-range double shotgun crystal spread; crystals also embed in surfaces.
+**Charged (hold > 0.5s):** Fires a close-range double shotgun crystal spread.
 - Mana Cost: 2 per cast
 
-**Encampment / Aux:** Returns all active crystals in sight back to your position, dealing damage to anything they pass through on the way back.
+**Encampment / Aux:** Fires active crystals to the point you are aiming at; One per click.
 - Mana Cost: 5 flat
-- Note: Crystals expire after ~15 seconds or on your next shot. Encampment only affects the last spread fired.
+- Note: Crystals expire after ~15 seconds or on your next shot.
 
 ---
 
