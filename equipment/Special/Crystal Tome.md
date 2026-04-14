@@ -1,4 +1,4 @@
-# [Ash] - Crystal Tome v0.1
+# [Ash] - Crystal Tome v1.0.0
 
 ## Specs
 
