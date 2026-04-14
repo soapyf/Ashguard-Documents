@@ -14,15 +14,12 @@ All Commands Are On Channel 1. Default keybinds are listed below.
 
 | KeyBind | Chat Command | Description |
 |---------|--------------|-------------|
-| —       | d            | Switch to Fire Mode 0 — Crystal Burst / Crystal Shards |
-| —       | d2           | Switch to Fire Mode 1 — Homing Mote / Homing Crystal Mass |
-| —       | d3           | Switch to Fire Mode 2 — Crystal Spike |
-| —       | s / s2 / s3  | Sling / holster the weapon |
-| —       | melee        | Trigger book melee strike |
-| —       | aux          | Encampment / secondary fire (mode-dependent) |
-| —       | r            | Reload |
+| Shift + 1 | d            | Switch to Fire Mode 0 — Crystal Burst / Crystal Shards |
+| Shift + 2 | d2           | Switch to Fire Mode 1 — Homing Mote / Homing Crystal Mass |
+| Shift + 3 | d3           | Switch to Fire Mode 2 — Crystal Spike |
+| F       | melee        | Trigger book melee strike |
+| Q       | aux          | Encampment / secondary fire (mode-dependent) |
 | —       | reset        | Reset script |
-| —       | L1 / L2 / L3 / L2R / L2L | Detach corresponding layer |
 
 ---
 
