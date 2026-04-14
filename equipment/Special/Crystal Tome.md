@@ -4,7 +4,7 @@
 
 | Name    | Value     |
 |---------|-----------|
-| Layer   | L4        |
+| Layer   | L1,L2,L3  |
 | Channel | 1         |
 | Max Mana | 50       |
 | Mana Cost (hold charge) | 0.5/tick |
