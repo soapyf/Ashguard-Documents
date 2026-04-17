@@ -5,6 +5,7 @@
 | Name                 | Value    |
 |----------------------|----------|
 | Layer                | L1       |
+| Firemode             | Semi     |
 | Magazine Size        | 20       |
 | Reload Time(seconds) | 3.0      |
 | Rounds Per Minute    | 300      |
