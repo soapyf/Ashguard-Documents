@@ -11,7 +11,8 @@ All Commands Are On Channel 1. Default keybinds are listed below.
 | KeyBind      | Chat Command | Description                                                 
 |--------------|--------------|-------------------------------------------------------------
 | Shift + 3    | d3           | Draws weapon                                                
-| —            | s3           | Sling weapon
+| —            | s3           | Sling weapon                                             
+| Left Click   | -            | Fire in mouselook
 | R            | r            | Cycle Through Round Selection
 | Q            | aux          | Fire while in deployed mode
 | 1            | fm           | Toggle High/Low angle mode
