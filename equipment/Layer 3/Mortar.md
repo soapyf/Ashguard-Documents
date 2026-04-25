@@ -5,8 +5,8 @@
 | Layer               | 3            |
 | Stats               | See Below    |
 
-> [!NOTE] Reload times are doubled when in hip fire mode.
-> [!NOTE] Between Kill Radius and Falloff Radius damage reduces at a linear rate the farther beyond Kill Radius a detected object is.
+> Reload times are doubled when in hip fire mode.
+> Between Kill Radius and Falloff Radius damage reduces at a linear rate the farther beyond Kill Radius a detected object is.
 
 ### Explosive Round
 | Stat                | Value        |
