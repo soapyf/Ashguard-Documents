@@ -17,6 +17,7 @@ All Commands Are On Channel 1. Default keybinds are listed below.
 | 1            | fm           | Toggle High/Low angle mode
 | 2            | fm2          | Toggle deploy/hip-fire mode
 
+> [!NOTE]
 > Reload times are doubled when in hip fire mode.
 > Between Kill Radius and Falloff Radius damage reduces at a linear rate the farther beyond Kill Radius a detected object is.
 
