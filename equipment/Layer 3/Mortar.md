@@ -5,6 +5,18 @@
 | Layer               | 3            |
 | Stats               | See Below    |
 
+## Commands
+All Commands Are On Channel 1. Default keybinds are listed below.
+
+| KeyBind      | Chat Command | Description                                                 
+|--------------|--------------|-------------------------------------------------------------
+| Shift + 3    | d3           | Draws weapon                                                
+| —            | s3           | Sling weapon
+| R            | r            | Cycle Through Round Selection
+| Q            | aux          | Fire while in deployed mode
+| 1            | fm           | Toggle High/Low angle mode
+| 2            | fm2          | Toggle deploy/hip-fire mode
+
 > Reload times are doubled when in hip fire mode.
 > Between Kill Radius and Falloff Radius damage reduces at a linear rate the farther beyond Kill Radius a detected object is.
 
