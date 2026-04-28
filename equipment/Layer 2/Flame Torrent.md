@@ -44,15 +44,15 @@ xychart-beta
     title "Avatar Damage Falloff by Distance"
     x-axis ["0m", "5m", "10m", "15m", "20m"]
     y-axis "Avatar Damage" 0 --> 100
-    line [100, 100, 0]
+    line [100, 100, 66.6, 33.3, 0]
 ```
 
 ```mermaid
 xychart-beta
     title "LBA Damage Falloff by Distance"
     x-axis ["0m", "7.5m", "10m", "15m", "20m"]
-    y-axis "Avatar Damage" 0 --> 10
-    line [10, 10, 0]
+    y-axis "LBA Damage" 0 --> 10
+    line [10, 10, 8, 4, 0]
 ```
 
 ### Detection
