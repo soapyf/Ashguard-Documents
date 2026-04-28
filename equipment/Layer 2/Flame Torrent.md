@@ -47,6 +47,14 @@ xychart-beta
     line [100, 100, 0]
 ```
 
+```mermaid
+xychart-beta
+    title "LBA Damage Falloff by Distance"
+    x-axis ["0m", "7.5m", "10m", "15m", "20m"]
+    y-axis "Avatar Damage" 0 --> 10
+    line [10, 10, 0]
+```
+
 ### Detection
 Continuously fires while the mouse button is held, consuming mana each tick. Detection uses a two-pass sensor system:
 
