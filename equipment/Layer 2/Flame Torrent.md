@@ -44,7 +44,7 @@ xychart-beta
     title "Damage Falloff by Distance"
     x-axis ["0m", "5m", "10m", "15m", "20m"]
     y-axis "Avatar Damage" 0 --> 100
-    line [100, 100, 50, 25, 0]
+    line [100, 100, 66, 33, 0]
 ```
 
 ### Detection
