@@ -61,10 +61,10 @@ Continuously fires while the mouse button is held, consuming mana each tick. Det
 #### Detection Cone (Top-Down)
 <table>
 <tr>
-<td><img src="../images/flametorrent_1.svg" width="860" height="600"></td>
+<td><img src="../images/flametorrent_1.png" alt="Diagram 1" width="800"></td>
 </tr>
 <tr>
-<td><img src="../images/flametorrent_2.svg" width="860" height="600"></td>
+<td><img src="../images/flametorrent_2.png" alt="Diagram 1" width="800"></td>
 </tr>
 </table>
 
