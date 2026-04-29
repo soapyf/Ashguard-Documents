@@ -52,7 +52,7 @@ xychart-beta
     title "LBA Damage Falloff by Distance"
     x-axis ["0m", "7.5m", "10m", "15m", "20m"]
     y-axis "LBA Damage" 0 --> 10
-    line [10, 10, 8, 4, 0]
+    line [10, 10, 6.66, 3.33, 0]
 ```
 
 ### Detection
