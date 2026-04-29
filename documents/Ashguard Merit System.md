@@ -111,9 +111,9 @@ Awarded to those who strengthen the Ashguard community through recruiting, train
 | Tier | Requirement | Reward |
 |------|------------|--------|
 | Apprentice Pillar | Helped build the community | 50 Motes |
-| Journeyman Pillar | Actively recruits, trains, or patrols | Ashguard Service Medallion (Bronze) |
+| Journeyman Pillar | Actively recruits, trains, or patrols | Ancestor Chainwrap |
 | Expert Pillar | Dedicated to community growth | 100 Motes |
-| Master Pillar | A cornerstone of the Ashguard | Ashguard Service Medallion (Gold) on Ceremonial Chain |
+| Master Pillar | A cornerstone of the Ashguard | Ashguard Service Medallion (Gold) to hang from Chainwrap |
 
 ---
 
