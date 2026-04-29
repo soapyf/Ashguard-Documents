@@ -28,7 +28,7 @@ The Besieger merit is awarded to those who commit themselves to frequent raiding
 | Apprentice Besieger | Participate in a few raids | 50 Motes |
 | Journeyman Besieger | Participate in many raids | Raider's Pauldron (Iron) |
 | Expert Besieger | Participate in a great number of raids | 100 Motes |
-| Master Besieger | Mastered the art of raiding | Raider's Pauldron (Ebony) with Battle Banner |
+| Master Besieger | Mastered the art of raiding | Raider's Pauldron (Ebony) and Armor Spike |
 
 ### Assassin
 
@@ -37,9 +37,9 @@ The Assassin merit rewards those with an aptitude for murder and the favor of Me
 | Tier | Requirement | Reward |
 |------|------------|--------|
 | Apprentice Assassin | Known for reliably killing enemies | 50 Motes |
-| Journeyman Assassin | Relied on to hold their own, killing more than dying | Morag Tong Face Wraps (Basic) |
+| Journeyman Assassin | Relied on to hold their own, killing more than dying | Morag Tong Face Wraps |
 | Expert Assassin | Frequently multikills — this is their quadrant now | 100 Motes |
-| Master Assassin | The Morag Tong want to know your location | Morag Tong Face Wraps (Marked) with Shadow Hood |
+| Master Assassin | The Morag Tong want to know your location | Shadow Hood |
 
 ### Defender
 
@@ -50,7 +50,7 @@ To earn the Defender merit, members must be ready to protect Balmora at any time
 | Apprentice Defender | Been on several defences | 50 Motes |
 | Journeyman Defender | Defended the base many times | Guardian's Pauldron (Steel) |
 | Expert Defender | Rarely a raid where they are not defending | 100 Motes |
-| Master Defender | Can practically defend on their own | Guardian's Pauldron (Glass) with Honorguard Cloak |
+| Master Defender | Can practically defend on their own | Guardian's Pauldron (Ebony) |
 
 ### Pointman
 
@@ -61,7 +61,7 @@ The Pointman merit is awarded to those who capture enemy objectives.
 | Apprentice Pointman | Seen capturing a fair few objectives | 50 Motes |
 | Journeyman Pointman | Seen capturing objectives often | Ashstorm Dust Goggles |
 | Expert Pointman | Controls the objectives almost always | 100 Motes |
-| Master Pointman | Master of the objective | Ashstorm Dust Hood with Integrated Goggles |
+| Master Pointman | Master of the objective | Ashstorm Jingasa |
 
 ### Flagbearer
 
@@ -70,9 +70,9 @@ Holders of the Flagbearer merit lock down key defensive objectives.
 | Tier | Requirement | Reward |
 |------|------------|--------|
 | Apprentice Flagbearer | Holds down defensive objectives often | 50 Motes |
-| Journeyman Flagbearer | Spends more time reinforcing and defending objectives | Standard Bearer's Sash (Blue) |
+| Journeyman Flagbearer | Spends more time reinforcing and defending objectives | Masterwork Round Shield |
 | Expert Flagbearer | Knows when and where to defend, can do it perfectly | 100 Motes |
-| Master Flagbearer | This is my objective and I won't die holding it | Standard Bearer's Sash (Gold) with Back-Mounted Battle Standard |
+| Master Flagbearer | This is my objective and I won't die holding it | Masterwork Bonescale Shield |
 
 ---
 
@@ -85,7 +85,7 @@ Awarded for specialized battlefield roles including construction, anti-armor, an
 | Tier | Requirement | Reward |
 |------|------------|--------|
 | Apprentice Specialist | Frequently employs specialized tactics | 50 Motes |
-| Journeyman Specialist | Relied upon for specialized roles | Specialist's Arm Wraps (color matches Pauldrons) |
+| Journeyman Specialist | Relied upon for specialized roles | Specialist's Rune Bracer |
 | Expert Specialist | Master of their specialized role | 100 Motes |
 | Master Specialist | Defines what it means to be a specialist | Specialist's Glowing Rune Bracer |
 
@@ -100,9 +100,9 @@ Natural born raid leaders who take Ashguard into battle.
 | Tier | Requirement | Reward |
 |------|------------|--------|
 | Apprentice Field Commander | Led several raids | 50 Motes |
-| Journeyman Field Commander | Led quite a few raids | OIC's Shoulder Cape (Red) |
+| Journeyman Field Commander | Led quite a few raids | OIC's Shoulder Cape (Crimson) |
 | Expert Field Commander | Led many raids frequently | 100 Motes |
-| Master Field Commander | Instrumental in leading the Ashguard | OIC's Shoulder Cape (Crimson) with Commander's Amulet |
+| Master Field Commander | Instrumental in leading the Ashguard | Master OIC's Ornate Shoulder Cape (both ornate and non will allow recolor) with Commander's Amulet |
 
 ### Pillar of the Ashguard
 
@@ -123,44 +123,7 @@ These merits do not follow the four-tier progression. They are awarded as one-ti
 
 | Merit | Requirement | Reward |
 |-------|------------|--------|
-| Mark of the Redoran | Proficiency with melee | Redoran War Paint (Face Tattoo - Red) |
-| Mark of the Telvanni | Proficiency with magic | Telvanni War Paint (Face Tattoo - Purple) |
-| Mark of the Artificer | Created content for the group | Artificer's Glowing Rune Bracer (Gold variant of Specialist's) |
+| Mark of the Redoran | Proficiency with melee | TBD - Weapon Variant (Ebony)? |
+| Mark of the Telvanni | Proficiency with magic | TBD - Spell Variant (Blue fire)? |
+| Mark of the Artificer | Created content for the group | Artificer's Glowing Rune Bracer (Dwemer Brass variant of Specialist's) |
 | Nightwatchman | On base frequently during off hours | Night Watch Lantern (Belt) |
-
----
-
-## Weapon Mastery Merits
-
-Weapon Mastery merits recognize proficiency with individual weapons in the Ashguard arsenal. Each weapon has its own independent progression track.
-
-| Tier | Reward |
-|------|--------|
-| Apprentice Wielder | 50 Motes |
-| Journeyman Wielder | Weapon Mastery Ribbon (color coded by weapon type) |
-| Expert Wielder | 100 Motes |
-| Master Wielder | Weapon Master's Trophy Charm (Belt ornament with weapon icon) |
-
-### Weapon List and Ribbon Colors
-
-**Ranged Weapons (Red Ribbons)**
-- Tempest Micro Repeater
-- Soulseeker Repeater
-- Soulrender Heavy Repeater
-- Soulburst Scattergun
-- Bonebiter Bow
-
-**Telvanni Weapons (Purple Ribbons)**
-- Fyr Telvanni Rifle
-- Fyr Soulcaster Pistol
-
-**Magical Weapons (Blue Ribbons)**
-- Flame Staff
-- Lightning Staff
-- Flame Torrent
-- Harmonic Disintegrator
-
-**Traditional Weapons (Green Ribbons)**
-- Glass Halberd
-- Ebony Warhammer
-- Chitin Throwing Stars
