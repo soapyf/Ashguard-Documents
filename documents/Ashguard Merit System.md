@@ -37,9 +37,9 @@ The Assassin merit rewards those with an aptitude for murder and the favor of Me
 | Tier | Requirement | Reward |
 |------|------------|--------|
 | Apprentice Assassin | Known for reliably killing enemies | 50 Motes |
-| Journeyman Assassin | Relied on to hold their own, killing more than dying | Morag Tong Face Wraps |
+| Journeyman Assassin | Relied on to hold their own, killing more than dying | Shadow Hood |
 | Expert Assassin | Frequently multikills — this is their quadrant now | 100 Motes |
-| Master Assassin | The Morag Tong want to know your location | Shadow Hood |
+| Master Assassin | The Morag Tong want to know your location | Morag Tong Face Wraps |
 
 ### Defender
 
