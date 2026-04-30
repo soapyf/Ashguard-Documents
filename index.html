@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Ashguard Documentation Repository</title>
 
     <!-- Prevent theme flash: apply saved theme before any paint -->
@@ -1096,7 +1099,7 @@
 
         let text;
         try {
-            const response = await fetch(`${RAW_BASE}/${path}`);
+            const response = await fetch(`${RAW_BASE}/${path}?_=${Date.now()}`);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             text = await response.text();
         } catch (err) {
