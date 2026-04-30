@@ -42,4 +42,3 @@ The shield has a separate HP pool tracked by its collider prim. When HP reaches 
 | HP = 0       | Shield breaks, block disabled                  |
 | Teleport     | HP reset to 50, shield restored                |
 
-The collider prim becomes phantom while not blocking, triggering passive regeneration every 2.5 seconds (scaled by region time dilation). A broken shield recharges at **2 HP per tick** instead of 1, and automatically revives once HP is fully restored.
