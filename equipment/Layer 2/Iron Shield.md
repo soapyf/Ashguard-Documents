@@ -24,14 +24,13 @@ All Commands Are On Channel 1. Default keybinds are listed below.
 
 ## Blocking
 
-Holding the crouch key (C) raises the shield into a block stance, absorbing incoming damage for attacks within a ~26° frontal arc.
+Holding the crouch key (C) raises the shield into a block stance, absorbing incoming damage for attacks within a ~64° frontal arc.
 
 | Damage Type | Reduction  |
 |-------------|------------|
 | All others  | 100%       |
 | Explosive   | 35%        |
 
-> Arc is determined by a dot-product threshold of `0.45` between the shield's forward vector and the direction to the attacker — approximately **±63°**.
 
 ## Shield HP
 
