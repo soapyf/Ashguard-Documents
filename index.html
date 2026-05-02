@@ -1384,8 +1384,54 @@
         // Wire up the Sim Rules pinned button
         const simRulesBtn = document.getElementById('sidebar-simrules-btn');
         if (simRulesBtn) {
+            let simRulesClickCount = 0;
+            let simRulesClickTimer = null;
+            let easterEggPick = null;
+            const EASTER_EGG_FILES = ['Ashguard_Rules_Legal.md', 'ashguard_rules_carls_jr.md'];
+
+            function loadEasterEgg(pick) {
+                const contentEl = document.getElementById('content');
+                contentEl.innerHTML = '<div id="content-state">Loading…</div>';
+                fetch(pick + '?_=' + Date.now())
+                    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+                    .then(text => {
+                        contentEl.innerHTML = marked.parse(text);
+                        scrollToTop();
+                    })
+                    .catch(err => {
+                        contentEl.innerHTML = '<div id="content-state">Failed to load easter egg.<br><small>' + err.message + '</small></div>';
+                    });
+                history.pushState(null, '', '#' + pick.replace(/\.md$/, ''));
+                renderSidebar(root, '');
+                updateHomeLinkState(false);
+                updateSimRulesLinkState(false);
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').classList.remove('open');
+                    document.getElementById('sidebar-backdrop').classList.remove('visible');
+                }
+            }
+
             simRulesBtn.addEventListener('click', function (e) {
                 e.preventDefault();
+
+                if (easterEggPick) {
+                    loadEasterEgg(easterEggPick);
+                    return;
+                }
+
+                simRulesClickCount++;
+                clearTimeout(simRulesClickTimer);
+                simRulesClickTimer = setTimeout(() => { simRulesClickCount = 0; }, 3000);
+
+                if (simRulesClickCount >= 10) {
+                    simRulesClickCount = 0;
+                    clearTimeout(simRulesClickTimer);
+                    easterEggPick = EASTER_EGG_FILES[Math.floor(Math.random() * EASTER_EGG_FILES.length)];
+                    const pick = easterEggPick;
+                    loadEasterEgg(pick);
+                    return;
+                }
+
                 history.pushState(null, '', SIM_RULES_HASH);
                 const file = findFileByPath(root, SIM_RULES_PATH);
                 if (file) {
