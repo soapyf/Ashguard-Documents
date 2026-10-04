@@ -112,14 +112,6 @@ We do have a few merits to award for this month too, including a good few assass
 
 ---
 
-## Question Time
-
-Do any of the officers or NCOs have anything to bring up that I may have missed?
-
-Does anyone have anything they want to say, any questions they want to ask, or anything else?
-
----
-
 *And that is all for the September meeting. Thanks for coming, everyone!*
 
 ![Ashguard Banner](../documents/handbook-images/ashguard-banner.png)
