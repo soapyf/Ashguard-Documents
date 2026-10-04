@@ -18,6 +18,9 @@ But I suppose it is as good a place as any to refer people to Ashguard General i
 
 > **Download:** the VATs standalone is available at [github.com/squeedledorf/viewport-avatar-toolset](https://github.com/squeedledorf/viewport-avatar-toolset/releases/latest).
 
+![VATs editor](meeting-images/vats-editor.png)
+*The VATs editor in Animate mode, with the bone tree, graph editor and timeline.*
+
 ---
 
 ## Ashguard News
